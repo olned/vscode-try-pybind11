@@ -76,13 +76,13 @@ class bdist_wheel(bdist_wheel_):
         self.plat_name = platform_name
 
 setup(
-    name='try_pypind11_olned',
-    version='0.0.1',
+    name='try_pybind11_olned',
+    version='0.0.2',
     author='Oleg Nedbaylo',
     author_email='olned64@gmail.com',
     description='A test project using pybind11 and CMake',
     long_description='',
-    ext_modules=[CMakeExtension('try_pypind11_olned')],
+    ext_modules=[CMakeExtension('try_pybind11_olned')],
     cmdclass=dict(build_ext=CMakeBuild, bdist_wheel=bdist_wheel),
     zip_safe=False,
 )

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16.3)
-project(try_pypind11_olned VERSION 0.1.0 DESCRIPTION "pybind11 example")
+project(try_pybind11_olned VERSION 0.1.0 DESCRIPTION "pybind11 example")
 
 SET(PYBIND11_PYTHON_VERSION 3.8)
 

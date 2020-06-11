@@ -13,7 +13,7 @@ PYBIND11_MODULE(python_example, m) {
     m.doc() = R"pbdoc(
         Pybind11 example plugin
         -----------------------
-        .. currentmodule:: python_example
+        .. currentmodule:: try_pypind11_olned
         .. autosummary::
            :toctree: _generate
            add

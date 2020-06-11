@@ -7,10 +7,32 @@ int add(int i, int j)
     return i + j;
 }
 
-PYBIND11_MODULE(example, m)
-{
-    m.doc() = "pybind11 example plugin"; // optional module docstring
+namespace py = pybind11;
 
-    m.def("add", &add, "A function which adds two numbers",
-          py::arg("i"), py::arg("j"));
+PYBIND11_MODULE(python_example, m) {
+    m.doc() = R"pbdoc(
+        Pybind11 example plugin
+        -----------------------
+        .. currentmodule:: python_example
+        .. autosummary::
+           :toctree: _generate
+           add
+           subtract
+    )pbdoc";
+
+    m.def("add", &add, R"pbdoc(
+        Add two numbers
+        Some other explanation about the add function.
+    )pbdoc");
+
+    m.def("subtract", [](int i, int j) { return i - j; }, R"pbdoc(
+        Subtract two numbers
+        Some other explanation about the subtract function.
+    )pbdoc");
+
+#ifdef VERSION_INFO
+    m.attr("__version__") = VERSION_INFO;
+#else
+    m.attr("__version__") = "dev";
+#endif
 }

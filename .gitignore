@@ -1,5 +1,8 @@
+.eggs/
 build/
 venv/
+dist/
+tmp/
 *.so
 *.out
 *.egg-info

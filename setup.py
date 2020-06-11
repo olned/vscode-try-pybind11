@@ -1,9 +1,24 @@
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
+from distutils.util import get_platform
+from wheel.bdist_wheel import bdist_wheel as bdist_wheel_
 import sys
 import setuptools
 
 __version__ = '0.0.3'
+
+class bdist_wheel(bdist_wheel_):
+    def finalize_options(self):
+        from sys import platform as _platform
+        platform_name = get_platform()
+        if _platform == "linux" or _platform == "linux2":
+            # Linux
+            platform_name = 'manylinux1_x86_64'
+
+        bdist_wheel_.finalize_options(self)
+        self.universal = True
+        self.plat_name_supplied = True
+        self.plat_name = platform_name
 
 class get_pybind_include(object):
     """Helper class to determine the pybind11 include path
@@ -107,6 +122,6 @@ setup(
     long_description_content_type="text/markdown",
     ext_modules=ext_modules,
     setup_requires=['pybind11>=2.5.0'],
-    cmdclass={'build_ext': BuildExt},
+    cmdclass={'build_ext': BuildExt, 'bdist_wheel', bdist_wheel},
     zip_safe=False
 )

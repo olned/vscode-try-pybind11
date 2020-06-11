@@ -1,112 +1,88 @@
+import os
+import re
+import sys
+import platform
+import subprocess
+
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
-import sys
-import setuptools
+from distutils.version import LooseVersion
+from distutils.util import get_platform
+from wheel.bdist_wheel import bdist_wheel as bdist_wheel_
 
-__version__ = '0.0.3'
 
-class get_pybind_include(object):
-    """Helper class to determine the pybind11 include path
-    The purpose of this class is to postpone importing pybind11
-    until it is actually installed, so that the ``get_include()``
-    method can be invoked. """
+class CMakeExtension(Extension):
+    def __init__(self, name, sourcedir=''):
+        Extension.__init__(self, name, sources=[])
+        self.sourcedir = os.path.abspath(sourcedir)
 
-    def __str__(self):
-        import pybind11
-        return pybind11.get_include()
 
-ext_modules = [
-    Extension(
-        'pybind11-example-olned',
-        # Sort input source files to ensure bit-for-bit reproducible builds
-        # (https://github.com/pybind/python_example/pull/53)
-        sorted(['src/example.cpp']),
-        include_dirs=[
-            # Path to pybind11 headers
-            get_pybind_include(),
-        ],
-        language='c++'
-    ),
-]
-
-def has_flag(compiler, flagname):
-    """Return a boolean indicating whether a flag name is supported on
-    the specified compiler.
-    """
-    import tempfile
-    import os
-    with tempfile.NamedTemporaryFile('w', suffix='.cpp', delete=False) as f:
-        f.write('int main (int argc, char **argv) { return 0; }')
-        fname = f.name
-    try:
-        compiler.compile([fname], extra_postargs=[flagname])
-    except setuptools.distutils.errors.CompileError:
-        return False
-    finally:
+class CMakeBuild(build_ext):
+    def run(self):
         try:
-            os.remove(fname)
+            out = subprocess.check_output(['cmake', '--version'])
         except OSError:
-            pass
-    return True
+            raise RuntimeError("CMake must be installed to build the following extensions: " +
+                               ", ".join(e.name for e in self.extensions))
 
-def cpp_flag(compiler):
-    """Return the -std=c++[11/14/17] compiler flag.
-    The newer version is prefered over c++11 (when it is available).
-    """
-    flags = ['-std=c++17', '-std=c++14', '-std=c++11']
-
-    for flag in flags:
-        if has_flag(compiler, flag):
-            return flag
-
-    raise RuntimeError('Unsupported compiler -- at least C++11 support '
-                       'is needed!')
-
-class BuildExt(build_ext):
-    """A custom build extension for adding compiler-specific options."""
-    c_opts = {
-        'msvc': ['/EHsc'],
-        'unix': [],
-    }
-    l_opts = {
-        'msvc': [],
-        'unix': [],
-    }
-
-    if sys.platform == 'darwin':
-        darwin_opts = ['-stdlib=libc++', '-mmacosx-version-min=10.7']
-        c_opts['unix'] += darwin_opts
-        l_opts['unix'] += darwin_opts
-
-    def build_extensions(self):
-        ct = self.compiler.compiler_type
-        opts = self.c_opts.get(ct, [])
-        link_opts = self.l_opts.get(ct, [])
-        if ct == 'unix':
-            opts.append(cpp_flag(self.compiler))
-            if has_flag(self.compiler, '-fvisibility=hidden'):
-                opts.append('-fvisibility=hidden')
+        if platform.system() == "Windows":
+            cmake_version = LooseVersion(re.search(r'version\s*([\d.]+)', out.decode()).group(1))
+            if cmake_version < '3.1.0':
+                raise RuntimeError("CMake >= 3.1.0 is required on Windows")
 
         for ext in self.extensions:
-            ext.define_macros = [('VERSION_INFO', '"{}"'.format(self.distribution.get_version()))]
-            ext.extra_compile_args = opts
-            ext.extra_link_args = link_opts
-        build_ext.build_extensions(self)
+            self.build_extension(ext)
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+    def build_extension(self, ext):
+        extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
+        # required for auto-detection of auxiliary "native" libs
+        if not extdir.endswith(os.path.sep):
+            extdir += os.path.sep
+
+        cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
+                      '-DPYTHON_EXECUTABLE=' + sys.executable]
+
+        cfg = 'Debug' if self.debug else 'Release'
+        build_args = ['--config', cfg]
+
+        if platform.system() == "Windows":
+            cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(cfg.upper(), extdir)]
+            if sys.maxsize > 2**32:
+                cmake_args += ['-A', 'x64']
+            build_args += ['--', '/m']
+        else:
+            cmake_args += ['-DCMAKE_BUILD_TYPE=' + cfg]
+            build_args += ['--', '-j2']
+
+        env = os.environ.copy()
+        env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format(env.get('CXXFLAGS', ''),
+                                                              self.distribution.get_version())
+        if not os.path.exists(self.build_temp):
+            os.makedirs(self.build_temp)
+        subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
+        subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd=self.build_temp)
+
+class bdist_wheel(bdist_wheel_):
+    def finalize_options(self):
+        from sys import platform as _platform
+        platform_name = get_platform()
+        if _platform == "linux" or _platform == "linux2":
+            # Linux
+            platform_name = 'manylinux1_x86_64'
+
+        bdist_wheel_.finalize_options(self)
+        self.universal = True
+        self.plat_name_supplied = True
+        self.plat_name = platform_name
 
 setup(
-    name='pybind11-example-olned',
-    version=__version__,
+    name='pypind11-example-olned',
+    version='0.0.4',
     author='Oleg Nedbaylo',
     author_email='olned64@gmail.com',
     description='A test project using pybind11 and CMake',
-    url='https://github.com/olned/vscode-try-pybind11',
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    ext_modules=ext_modules,
-    setup_requires=['pybind11>=2.5.0'],
-    cmdclass={'build_ext': BuildExt},
-    zip_safe=False
+    long_description='',
+    ext_modules=[CMakeExtension('cmake_example_olned')],
+    cmdclass=dict(build_ext=CMakeBuild, bdist_wheel=bdist_wheel),
+    zip_safe=False,
 )

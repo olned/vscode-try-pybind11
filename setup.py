@@ -60,14 +60,17 @@ class CMakeBuild(build_ext):
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
         subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd=self.build_temp)
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
     name='olned-pybind11-example',
-    version='0.0.1',
+    version='0.0.2',
     author='Oleg Nedbaylo',
     author_email='olned64@gmail.com',
     description='A test project using pybind11 and CMake',
-    url='https://github.com/olned/vscode-try-pybind11'
-    long_description='This example is based on https://github.com/pybind/cmake_example',
+    url='https://github.com/olned/vscode-try-pybind11',
+    long_description=long_description,
     ext_modules=[CMakeExtension('cmake_example')],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,

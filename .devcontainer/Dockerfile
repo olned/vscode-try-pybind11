@@ -14,8 +14,8 @@ ARG USER_GID=$USER_UID
 
 RUN set -xe; apt-get update \
     && apt-get -y upgrade \
-    && apt-get -y install re2c python python3-dev python3-pip \
-    && pip3 install lint pytest
+    && apt-get -y install re2c python python3-dev python3-pip python3-venv python3-pybind11 ninja-build \
+    && pip3 install lint pytest pybind11
 
 
 # RUN set -xe; apt-get -y install \
@@ -50,14 +50,14 @@ RUN set -xe; groupadd --gid $USER_GID $USERNAME \
 #     catch
 
 
-RUN set -xe; git clone https://github.com/pybind/pybind11.git /home/olned/pybind11 \
-    && cd /home/olned/pybind11/ \
-    && mkdir build && cd build \
-    && cmake .. \
-    && make check -j 4 \
-    && make install \
-    && chown -R olned:olned /home/olned/pybind11 \
-    && pip3 install pybind11
+# RUN set -xe; git clone https://github.com/pybind/pybind11.git /home/olned/pybind11 \
+#     && cd /home/olned/pybind11/ \
+#     && mkdir build && cd build \
+#     && cmake .. \
+#     && make check -j 4 \
+#     && make install \
+#     && chown -R olned:olned /home/olned/pybind11 \
+#     && pip3 install pybind11
 
 # RUN update-alternatives --remove python /usr/bin/python2 \
 #    && update-alternatives --install /usr/bin/python python /usr/bin/python3 10

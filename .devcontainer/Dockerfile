@@ -15,7 +15,7 @@ ARG USER_GID=$USER_UID
 RUN set -xe; apt-get update \
     && apt-get -y upgrade \
     && apt-get -y install re2c python python3-dev python3-pip python3-venv python3-pybind11 ninja-build \
-    && pip3 install lint pytest pybind11
+    && pip3 install -U lint pytest twine setuptools wheel pybind11
 
 
 # RUN set -xe; apt-get -y install \

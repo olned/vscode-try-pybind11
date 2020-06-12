@@ -10,4 +10,6 @@ pybind11_add_module(
     try_pybind11_olned 
     try_pypind11_olned.cpp 
     ${CMAKE_SOURCE_DIR}/src/arithmetic.cpp
+    ${CMAKE_SOURCE_DIR}/src/pet/animal.cpp
+    ${CMAKE_SOURCE_DIR}/src/pet/dog.cpp
 )

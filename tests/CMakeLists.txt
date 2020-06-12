@@ -1,10 +1,12 @@
 add_executable(
-    my_test
+    cpp_tests
     main_test.cpp
-    arithmetic_test.cpp)
+    arithmetic_test.cpp
+    pet_test.cpp
+)
                
 target_link_libraries(
-    my_test
+    cpp_tests
     my_lib)
 
-add_test(NAME cpp_test COMMAND my_test)
+add_test(NAME cpp_my_lib_test COMMAND cpp_tests)

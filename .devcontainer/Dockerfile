@@ -14,7 +14,7 @@ RUN set -xe; apt-get update \
     && apt-get -y upgrade \
     && apt-get -y install  python python3-dev python3-pip python3-venv ninja-build \
     # re2c
-    && pip3 install -U pylint pytest twine setuptools wheel pybind11
+    && pip3 install -U autopep8 pylint pytest twine setuptools wheel pybind11
 
 
 RUN set -xe; groupadd --gid $USER_GID $USERNAME \

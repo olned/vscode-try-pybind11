@@ -1,13 +1,17 @@
 cmake_minimum_required(VERSION 3.16.3)
-project(try_pybind11_olned VERSION 0.1.0 DESCRIPTION "pybind11 example")
-
-SET(PYBIND11_PYTHON_VERSION 3.8)
+SET(PROJECT_VER "0.0.2")
+project(try_pybind11_olned VERSION ${PROJECT_VER} DESCRIPTION "pybind11 example")
 
 include(CTest)
 enable_testing()
 
+SET(SYSTEM PYBIND11_PYTHON_VERSION 3.8)
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/include)
+
+add_subdirectory(src)
 add_subdirectory(pybind11)
-pybind11_add_module(${PROJECT_NAME} src/example.cpp)
+add_subdirectory(bindings)
+add_subdirectory(tests)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

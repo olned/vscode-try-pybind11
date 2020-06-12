@@ -9,3 +9,4 @@ public:
 };
 
 std::string call_go(Animal *animal);
+std::string get_name(Animal *animal);

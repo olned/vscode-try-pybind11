@@ -9,31 +9,60 @@ class ArithmeticTest(TestCase):
     def test_subtract(self):
         self.assertEqual(m.subtract(3, 1), 2)
 
+class Dachshund(m.Dog):
+    def __init__(self, name):
+        m.Dog.__init__(self) # Without this, undefined behavior may occur if the C++ portions are referenced.
+        self._name = name
+    
+    def name(self):
+        return self._name
 
-class PetTest(TestCase):
+    def bark(self):
+        return "yap!"
 
-    def test_dog_go(self):
-        d = m.Dog()
-        self.assertEqual(d.go(2), "woof! woof!")
+class Cat(m.Animal):
+    def go(self, n_times):
+        return "meow! " * n_times
 
-    def test_call_go_cat(self):
-        class Cat(m.Animal):
-            def go(self, n_times):
-                return "meow! " * n_times
+class CatTest(TestCase):
+    def setUp(self):
+        self.cat = Cat()
 
-        c = Cat()
-        self.assertEqual(m.call_go(c), "meow! meow! meow! ")
+    def test_call_go(self):
+        self.assertEqual(m.call_go(self.cat), "meow! meow! meow! ")
 
-    def test_dachshund(self):
-        class Dachshund(m.Dog):
-            def __init__(self, name):
-                m.Dog.__init__(self) # Without this, undefined behavior may occur if the C++ portions are referenced.
-                self.name = name
-            def bark(self):
-                return "yap!"
+    def test_name(self):
+        self.assertEqual(self.cat.name(), "unknown")
+        
+    def test_get_name(self):
+        self.assertEqual(m.get_name(self.cat), "unknown")
 
-        d = Dachshund("Iza")
-        self.assertEqual(m.call_go(d), "woof! woof! woof!")
+
+class DogTest(TestCase):
+    def setUp(self):
+        self.dog = m.Dog()
+
+    def test_call_go(self):
+        self.assertEqual(self.dog.go(2), "woof! woof!")
+
+    def test_name(self):
+        self.assertEqual(self.dog.name(), "unknown")
+
+    def test_get_name(self):
+        self.assertEqual(m.get_name(self.dog), "unknown")
+
+class DachshundTest(TestCase):
+    def setUp(self):
+        self.iza = Dachshund("Iza")
+
+    def test_call_go(self):
+        self.assertEqual(m.call_go(self.iza), "yap! yap! yap!")
+
+    def test_name(self):
+        self.assertEqual(self.iza.name(), "Iza")
+
+    def test_get_name(self):
+        self.assertEqual(m.get_name(self.iza), "Iza")
 
 
 if __name__ == '__main__':

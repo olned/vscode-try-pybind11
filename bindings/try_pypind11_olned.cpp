@@ -1,13 +1,13 @@
-#include <pybind11/pybind11.h>
-#include <arithmetic.hpp>
 #include "py_animal.hpp"
 #include "py_dog.hpp"
+#include <arithmetic.hpp>
+#include <pybind11/pybind11.h>
 
 namespace py = pybind11;
 
 PYBIND11_MODULE(try_pybind11_olned, m)
 {
-    m.doc() = R"pbdoc(
+  m.doc() = R"pbdoc(
         Pybind11 example plugin
         -----------------------
         .. currentmodule:: try_pypind11_olned
@@ -17,40 +17,41 @@ PYBIND11_MODULE(try_pybind11_olned, m)
            subtract
     )pbdoc";
 
-    m.def("add", &add, R"pbdoc(
+  m.def("add", &add, R"pbdoc(
         Add two numbers
         Some other explanation about the add function.
     )pbdoc");
 
-    m.def(
-        "subtract", [](int i, int j) { return i - j; }, R"pbdoc(
+  m.def(
+      "subtract", [](int i, int j) { return i - j; }, R"pbdoc(
         Subtract two numbers
         Some other explanation about the subtract function.
     )pbdoc");
 
-    py::class_<Animal, PyAnimal /* <--- trampoline*/>(m, "Animal")
-        .def(py::init<>())
-        .def("go", &Animal::go)
-        .def("name", &Animal::name);
+  py::class_<Animal, PyAnimal<>> animal(m, "Animal");
+  py::class_<Dog, PyDog<>, Animal> dog(m, "Dog");
+  py::class_<Husky, PyDog<Husky>, Dog> husky(m, "Husky");
 
-    py::class_<Dog, PyDog, Animal>(m, "Dog")
-        .def(py::init<>())
-        .def("go", &Dog::go)
-        .def("name", &Dog::name)
-        .def("bark", &Dog::bark);
+  animal.def(py::init<>())
+      .def("go", &Animal::go)
+      .def("name", &Animal::name);
 
-    py::class_<Husky, PyHusky, Animal>(m, "Husky")
-        .def(py::init<>())
-        .def("go", &Husky::go)
-        .def("name", &Husky::name)
-        .def("bark", &Husky::bark);
+  dog.def(py::init<>())
+      .def("go", &Dog::go)
+      .def("name", &Dog::name)
+      .def("bark", &Dog::bark);
 
-    m.def("call_go", &call_go);
-    m.def("get_name", &get_name);
+  husky.def(py::init<>())
+      .def("go", &Husky::go)
+      .def("name", &Husky::name)
+      .def("bark", &Husky::bark);
+
+  m.def("call_go", &call_go);
+  m.def("get_name", &get_name);
 
 #ifdef VERSION_INFO
-    m.attr("__version__") = VERSION_INFO;
+  m.attr("__version__") = VERSION_INFO;
 #else
-    m.attr("__version__") = "dev";
+  m.attr("__version__") = "dev";
 #endif
 }

@@ -4,6 +4,7 @@
 class Animal {
 public:
     virtual ~Animal() { }
+    virtual std::string name() { return "unknown"; }
     virtual std::string go(int n_times) = 0;
 };
 

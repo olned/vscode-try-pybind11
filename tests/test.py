@@ -14,7 +14,7 @@ class PetTest(TestCase):
 
     def test_dog_go(self):
         d = m.Dog()
-        self.assertEqual(d.go(2), "woof! woof! ")
+        self.assertEqual(d.go(2), "woof! woof!")
 
     def test_call_go_cat(self):
         class Cat(m.Animal):
@@ -33,7 +33,7 @@ class PetTest(TestCase):
                 return "yap!"
 
         d = Dachshund("Iza")
-        self.assertEqual(m.call_go(d), "woof! woof! woof! ")
+        self.assertEqual(m.call_go(d), "woof! woof! woof!")
 
 
 if __name__ == '__main__':

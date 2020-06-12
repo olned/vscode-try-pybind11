@@ -77,7 +77,7 @@ class bdist_wheel(bdist_wheel_):
 
 setup(
     name='try_pybind11_olned',
-    version='0.0.3',
+    version='0.0.4',
     author='Oleg Nedbaylo',
     author_email='olned64@gmail.com',
     description='A test project using pybind11 and CMake',

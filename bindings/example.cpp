@@ -5,7 +5,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(try_pybind11_olned, m)
+PYBIND11_MODULE(example, m)
 {
   m.doc() = R"pbdoc(
         Pybind11 example plugin

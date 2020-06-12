@@ -1,5 +1,5 @@
 from unittest import TestCase, main
-import try_pybind11_olned as m
+import example as m
 
 
 class ArithmeticTest(TestCase):

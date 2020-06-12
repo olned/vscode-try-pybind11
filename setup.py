@@ -84,5 +84,6 @@ setup(
     long_description='',
     ext_modules=[CMakeExtension('try_pybind11_olned')],
     cmdclass=dict(build_ext=CMakeBuild, bdist_wheel=bdist_wheel),
+    test_suite='tests',
     zip_safe=False,
 )

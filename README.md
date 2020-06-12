@@ -2,7 +2,13 @@
 
 This is a training project
 
-# Install
+# Tests
+
+```bash
+python3 ./setup.py test
+```
+
+# Installation
 
 ```bash
 python3 -m pip install -U --user .

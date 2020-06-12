@@ -16,7 +16,3 @@ std::string Dog::go(int n_times)
 }
 
 std::string Dog::bark() { return "woof!"; }
-
-class Husky : public Dog
-{
-};

@@ -39,6 +39,12 @@ PYBIND11_MODULE(try_pybind11_olned, m)
         .def("name", &Dog::name)
         .def("bark", &Dog::bark);
 
+    py::class_<Husky, PyHusky, Animal>(m, "Husky")
+        .def(py::init<>())
+        .def("go", &Husky::go)
+        .def("name", &Husky::name)
+        .def("bark", &Husky::bark);
+
     m.def("call_go", &call_go);
     m.def("get_name", &get_name);
 

@@ -33,7 +33,7 @@ class CatTest(TestCase):
 
     def test_name(self):
         self.assertEqual(self.cat.name(), "unknown")
-        
+
     def test_get_name(self):
         self.assertEqual(m.get_name(self.cat), "unknown")
 
@@ -64,6 +64,18 @@ class DachshundTest(TestCase):
     def test_get_name(self):
         self.assertEqual(m.get_name(self.iza), "Iza")
 
+class HuskyTest(TestCase):
+    def setUp(self):
+        self.dog = m.Husky()
+
+    def test_call_go(self):
+        self.assertEqual(self.dog.go(2), "woof! woof!")
+
+    def test_name(self):
+        self.assertEqual(self.dog.name(), "unknown")
+
+    def test_get_name(self):
+        self.assertEqual(m.get_name(self.dog), "unknown")
 
 if __name__ == '__main__':
     main()

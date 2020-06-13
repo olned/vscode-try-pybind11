@@ -3,6 +3,7 @@ add_executable(
     main_test.cpp
     arithmetic_test.cpp
     pet_test.cpp
+    parser_test.cpp
 )
                
 target_link_libraries(

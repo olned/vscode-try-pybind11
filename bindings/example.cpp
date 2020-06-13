@@ -1,7 +1,9 @@
 #include "py_animal.hpp"
 #include "py_dog.hpp"
 #include <arithmetic.hpp>
+#include <parser/parser.hpp>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 
 namespace py = pybind11;
 
@@ -48,6 +50,20 @@ PYBIND11_MODULE(example, m)
 
   m.def("call_go", &call_go);
   m.def("get_name", &get_name);
+
+  py::class_<IntStr>(m, "IntStr")
+    .def_readwrite("value", &IntStr::value)
+    .def("__repr__",
+        [](const IntStr &a) {
+            return "<example.IntStr{" + std::to_string(a.value) + "}>";
+        }
+    );
+
+  py::class_<Parser>(m, "Parser")
+      .def(py::init<>())
+      .def("set_callback", &Parser::set_callback)
+      .def("set_strcallback", &Parser::set_strcallback)
+      .def("parse", &Parser::parse);
 
 #ifdef VERSION_INFO
   m.attr("__version__") = VERSION_INFO;

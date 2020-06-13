@@ -9,20 +9,24 @@ class ArithmeticTest(TestCase):
     def test_subtract(self):
         self.assertEqual(m.subtract(3, 1), 2)
 
+
 class Dachshund(m.Dog):
     def __init__(self, name):
-        m.Dog.__init__(self) # Without this, undefined behavior may occur if the C++ portions are referenced.
+        # Without this, undefined behavior may occur if the C++ portions are referenced.
+        m.Dog.__init__(self)
         self._name = name
-    
+
     def name(self):
         return self._name
 
     def bark(self):
         return "yap!"
 
+
 class Cat(m.Animal):
     def go(self, n_times):
         return "meow! " * n_times
+
 
 class CatTest(TestCase):
     def setUp(self):
@@ -51,6 +55,7 @@ class DogTest(TestCase):
     def test_get_name(self):
         self.assertEqual(m.get_name(self.dog), "unknown")
 
+
 class DachshundTest(TestCase):
     def setUp(self):
         self.iza = Dachshund("Iza")
@@ -64,6 +69,7 @@ class DachshundTest(TestCase):
     def test_get_name(self):
         self.assertEqual(m.get_name(self.iza), "Iza")
 
+
 class HuskyTest(TestCase):
     def setUp(self):
         self.dog = m.Husky()
@@ -76,6 +82,33 @@ class HuskyTest(TestCase):
 
     def test_get_name(self):
         self.assertEqual(m.get_name(self.dog), "unknown")
+
+
+class ParserTest(TestCase):
+    def setUp(self):
+        self.parser = m.Parser()
+        self.value = 0
+        self.parser.set_callback(self.set_value)
+        self.parser.set_strcallback(self.set_structure)
+
+    def set_value(self, n: int):
+        self.value = n
+
+    def set_structure(self, n: int):
+        self.value = n
+
+    def test_callback(self):
+        v = "10"
+        self.parser.parse(v)
+        self.assertEqual(self.value, int(v))
+
+    
+    def test_strcallback(self):
+        v = "i10"
+        self.parser.parse(v)
+        print(self.value, self.value.value)
+        self.assertEqual(self.value.value, int(v[1:]))
+
 
 if __name__ == '__main__':
     main()
